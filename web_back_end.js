@@ -3,8 +3,8 @@ const express = require('express')
 const app = express()
 
 app.get("/",(request, response) => {
-	//resp.sendFile("HTML file directory")
-	response.end('This is a test for stuff')
+	resp.sendFile(__dirname + "/web_front_end.html")
+	//response.end('This is a test for stuff')
 })
 
 app.listen(3000, (err) => {
