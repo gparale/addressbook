@@ -4,12 +4,13 @@ const app = express()
 
 app.use(express.static(__dirname + "/src"))
 app.get("/",(request, response) => {
-	resp.sendFile(__dirname + "/web_front_end.html")
+	response.sendFile(__dirname + "/web_front_end.html")
 	//response.end('This is a test for stuff')
 })
 
 app.get("/resources", (request, response)=>{
-	console.log(request.body)
+	console.log(request.body);
+	response.send("yo dawg")
 })
 app.listen(3000, (err) => {
 	if (err) {
