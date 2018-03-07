@@ -7,6 +7,9 @@ app.get("/",(request, response) => {
 	//response.end('This is a test for stuff')
 })
 
+app.get("/resources", (request, response)=>{
+	console.log(request.body)
+})
 app.listen(3000, (err) => {
 	if (err) {
 		console.log('Server is down');
