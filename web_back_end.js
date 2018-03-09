@@ -13,7 +13,12 @@ app.get("/",(request, response) => {
 
 app.post("/resources", (request, response)=>{
 	console.log(request.body);
-	response.send("yo dawg")
+	response.redirect(301, "/hub")
+	//response.redirect("/hub")
+})
+
+app.get("/hub", (request, response) =>{
+	response.render("Working hub")
 })
 app.listen(3000, (err) => {
 	if (err) {
