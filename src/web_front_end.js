@@ -9,6 +9,8 @@ document.getElementById("testme").addEventListener("click", () => {
 			"pass": "slit"
 		})
 	}).then((response) => {
-		console.log(response);
+		return response.json()
+	}).then((json)=>{
+		window.location.assign(json.url)
 	});
 });
