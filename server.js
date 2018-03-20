@@ -1,9 +1,16 @@
+<<<<<<< HEAD
 const request = require('request')
 const express = require('express')
 const bodyParser = require('body-parser')
 const session = require('express-session')
 
 const app = express()
+=======
+const request = require('request');
+const express = require('express');
+const bodyParser = require('body-parser');
+const app = express();
+>>>>>>> fc3f8a38b28124f6289119963417172ef751a42d
 
 app.use(express.static(__dirname + "/src"))
 app.use(bodyParser.json()) //Needed for when retrieving JSON from front-end
@@ -13,8 +20,7 @@ app.use(session({secret: 'tolkien', saveUninitialized: false, resave: false, coo
 
 app.get("/",(request, response) => {
 
-	request.session.testvar = "Test";
-	response.sendFile(__dirname + "/web_front_end.html")
+	response.sendFile(__dirname + "/front_end.html")
 	//response.end('This is a test for stuff')
 })
 
