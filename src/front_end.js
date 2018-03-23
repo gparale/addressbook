@@ -1,4 +1,4 @@
-document.getElementById("testme").addEventListener("click", () => {
+document.getElementById("loginAccount").addEventListener("click", () => {
 	fetch('/resources', {
 		method: "POST",
         credentials: "include",
@@ -6,14 +6,18 @@ document.getElementById("testme").addEventListener("click", () => {
 			"Content-Type": "application/json"
 		},
 		body: JSON.stringify({
-			"name": "Glenn",
-			"pass": "slit"
+			"name": document.getElementById("loginUser").value,
+			"pass": document.getElementById("loginPwd").value
 		})
 	}).then((response) => {
-		console.log(response);
         return response.json();
 	}).then((json)=>{
-        window.location.assign(json.url)
+		if(json.message === "Login Successful"){
+			window.location.assign(json.url)
+		}else{
+			alert("Login Failed");
+		}
+        
     });
 });
 

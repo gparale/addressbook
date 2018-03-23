@@ -19,11 +19,16 @@ app.get("/",(request, response) => {
 })
 
 app.post("/resources", (request, response, next)=>{
-	request.session.myvar = request.body
-	console.log("Log From /resources")
-	console.log(request.session)
-	console.log(request.sessionID)
-	response.json({message: "Success", url: "hub"})
+	if (request.body["name"] === "Glenn" && request.body["pass"] === "slit"){
+		request.session.myvar = request.body
+		console.log("Log From /resources")
+		console.log(request.session)
+		console.log(request.sessionID)
+		response.json({message: "Login Successful", url: "hub"})
+	} else{
+		response.json({message: "Login Failed", url: "Message Failed"})
+	}
+	
 	//response.redirect("/hub")
 })
 
