@@ -1,6 +1,7 @@
 document.getElementById("testme").addEventListener("click", () => {
 	fetch('/resources', {
 		method: "POST",
+        credentials: "include",
 		headers: {
 			"Content-Type": "application/json"
 		},
@@ -10,7 +11,10 @@ document.getElementById("testme").addEventListener("click", () => {
 		})
 	}).then((response) => {
 		console.log(response);
-	});
+        return response.json();
+	}).then((json)=>{
+        window.location.assign(json.url)
+    });
 });
 
 // Get the modal

@@ -1,13 +1,14 @@
-const request = require('request')
+//const request = require('request')
 const express = require('express')
 const bodyParser = require('body-parser')
 const session = require('express-session')
+const hbs = require('hbs')
 
 const app = express();
 
 app.use(express.static(__dirname + "/src"))
 app.use(bodyParser.json()) //Needed for when retrieving JSON from front-end
-app.set('view engine', 'ejs')
+app.set('view engine', 'hbs')
 app.use(session({secret: 'tolkien', saveUninitialized: false, resave: false, cookie: {maxAge: 5*60000}}))
 
 
@@ -31,9 +32,8 @@ app.get("/hub", (request, response, next) =>{
 
 	console.log(request.session)
 	console.log(request.sessionID);
-	console.log(request.cookies)
 	
-	response.send("stuff")
+	response.send(request.session.myvar)
 })
 app.listen(3000, (err) => {
 	if (err) {
