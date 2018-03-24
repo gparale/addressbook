@@ -1,42 +1,61 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>front end success</title>
-		<link rel="stylesheet" type="text/css" href="/front_end.css">
-	</head>
-	<body>
-        <div id="upper">
-            <div class="buttonDiv">
-                <button class="homeButton" id="login">Log In</button>
-            </div>
-            <div class="buttonDiv">
-                <button class="homeButton" id="signup">Sign Up</button>
-            </div>
+
+<head>
+    <title>front end success</title>
+    <link rel="stylesheet" type="text/css" href="/front_end.css">
+</head>
+
+<body>
+    <div id="upper">
+        <div id="main">
+            <h2>CallCentre</h2>
         </div>
-		<div id="main">
-			<h2>front end functioning</h2>
-		</div>
-        <div id="signupModal" class="modal">
-            <div class="modal-content">
-                <span class="close">&times;</span>
-                <h2>Addressbook Signup</h2>
-                <input id="fname" class="modalInput" type="text" placeholder="First Name"/> <input id="lname" class="modalInput" type="text" placeholder="Last Name"/><br/>
-                <input id="signupEmail" class="modalInput" type="text" placeholder="Email Address"/><br/>
-                <input id="signupUser" class="modalInput" type="text" placeholder="Username"/><br/>
-                <input id="signupPwd" class="modalInput" type="password" placeholder="Password"/><br/>
-                <input id="confirmPwd" class="modalInput" type="password" placeholder="Retype Password"/><br/>
-                <button id="createAccount">Create Account</button>
-            </div>
+        <div class="buttonDiv">
+            <button class="homeButton" id="login">Log In</button>
         </div>
-        <div id="loginModal" class="modal">
-            <div class="modal-content">
-                <span class="close">&times;</span>
-                <h2>Addressbook Login</h2>
-                <input id="loginUser" class="modalInput" type="text" placeholder="Username"/><br/>
-                <input id="loginPwd" class="modalInput" type="password" placeholder="Password"/><br/>
-                <button id="loginAccount">Log In</button>
-            </div>
+        <div class="buttonDiv">
+            <button class="homeButton" id="signup">Sign Up</button>
         </div>
-        <script src="/front_end.js"></script>
-	</body>
+    </div>
+    <div id="front_page_news">
+        <div id="news_image">
+            
+        </div>
+        <div id="news_description">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce posuere, urna nec posuere pellentesque, turpis augue bibendum augue, pretium rutrum orci purus sit amet neque. Nulla turpis metus, vehicula eu congue a, mollis in ipsum. Sed sed ex et nibh rutrum blandit. Suspendisse accumsan condimentum ligula, rutrum ornare orci posuere a. Mauris vestibulum ante velit, sed aliquam dolor blandit quis. Aenean rhoncus justo eget nunc rutrum pharetra ac id neque. Phasellus rhoncus est consectetur, aliquet arcu non, consectetur mauris. In ultricies velit sit amet sem elementum, eu semper ex ullamcorper.
+        </div>
+    </div>
+    <div id="signupModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Addressbook Signup</h2>
+            <input id="fname" class="modalInput" type="text" placeholder="First Name" />
+            <input id="lname" class="modalInput" type="text" placeholder="Last Name" />
+            <br/>
+            <input id="signupEmail" class="modalInput" type="text" placeholder="Email Address" />
+            <br/>
+            <input id="signupUser" class="modalInput" type="text" placeholder="Username" />
+            <br/>
+            <input id="signupPwd" class="modalInput" type="password" placeholder="Password" />
+            <br/>
+            <input id="confirmPwd" class="modalInput" type="password" placeholder="Retype Password" />
+            <br/>
+            <button id="createAccount">Create Account</button>
+        </div>
+    </div>
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Addressbook Login</h2>
+            <input id="loginUser" class="modalInput" type="text" placeholder="Username" />
+            <br/>
+            <input id="loginPwd" class="modalInput" type="password" placeholder="Password" />
+            <br/>
+            <button id="loginAccount">Log In</button>
+        </div>
+    </div>
+    <script src="/front_end.js"></script>
+</body>
+
 </html>

@@ -1,3 +1,4 @@
+
 document.getElementById("loginAccount").addEventListener("click", () => {
 	fetch('/resources', {
 		method: "POST",
@@ -18,7 +19,6 @@ document.getElementById("loginAccount").addEventListener("click", () => {
 		}else{
 			alert("Login Failed");
 		}
-        
     });
 });
 
