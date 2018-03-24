@@ -6,7 +6,8 @@ document.getElementById("loginAccount").addEventListener("click", () => {
 			"Content-Type": "application/json"
 		},
 		body: JSON.stringify({
-			"name": document.getElementById("loginUser").value,
+			"request-type": "login",
+            "name": document.getElementById("loginUser").value,
 			"pass": document.getElementById("loginPwd").value
 		})
 	}).then((response) => {
@@ -16,6 +17,30 @@ document.getElementById("loginAccount").addEventListener("click", () => {
 			window.location.assign(json.url)
 		}else{
 			alert("Login Failed");
+		}
+        
+    });
+});
+
+document.getElementById("signupAccount").addEventListener("click", () => {
+	fetch('/resources', {
+		method: "POST",
+        credentials: "include",
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify({
+            "request-type": "signup",
+			"name": document.getElementById("loginUser").value,
+			"pass": document.getElementById("loginPwd").value
+		})
+	}).then((response) => {
+        return response.json();
+	}).then((json)=>{
+		if(json.message === "Signup Successful"){
+			window.location.assign(json.url)
+		}else{
+			alert("Signup Failed");
 		}
         
     });

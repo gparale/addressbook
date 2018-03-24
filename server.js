@@ -3,8 +3,11 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const session = require('express-session')
 const hbs = require('hbs')
+const pg = require('pg')
 
 const app = express();
+
+var dbURL = process.env.DATABASE_URL || "postgres://localhost:5432/postgres"; // change this per db name
 
 app.use(express.static(__dirname + "/src"))
 app.use(bodyParser.json()) //Needed for when retrieving JSON from front-end
@@ -19,7 +22,7 @@ app.get("/",(request, response) => {
 })
 
 app.post("/resources", (request, response, next)=>{
-	if (request.body["name"] === "Glenn" && request.body["pass"] === "slit"){
+	/*if (request.body["name"] === "Glenn" && request.body["pass"] === "slit"){
 		request.session.myvar = request.body
 		console.log("Log From /resources")
 		console.log(request.session)
@@ -28,7 +31,13 @@ app.post("/resources", (request, response, next)=>{
 	} else{
 		response.json({message: "Login Failed", url: "Message Failed"})
 	}
-	
+	*/
+    if (request.body["request-type"] === "login") {
+                        
+    }
+    else if  (request.body["request-type"] === "signup") {
+        
+    }
 	//response.redirect("/hub")
 })
 
@@ -40,6 +49,41 @@ app.get("/hub", (request, response, next) =>{
 	
 	response.send(request.session.myvar)
 })
+
+app.post("/register", function(req, resp){
+    var passcode = req.body.thePasscode;
+    var email = req.body.theEmail;
+    var username = req.body.theUsername;
+    
+    pg.connect(dbURL, function(err, client, done){
+       if(err){
+           console.log(err);
+           var obj = {
+               status:"fail",
+               msg:"CONNECTION FAIL"
+           }
+           resp.send(obj);
+        }
+        
+        client.query("INSERT INTO users (username, passcode, email) VALUES ($1, $2, $3)", [username, passcode, email], function(err, result){
+            done();
+            if(err){
+                console.log(err);
+                var obj = {
+                   status:"fail",
+                   msg:"Username/passcode/email is/are invalid"
+                }
+                resp.send(obj);
+            }
+                     
+            var obj = {
+                status:"success"
+            }
+            resp.send(obj);
+        });
+    });
+});
+
 app.listen(3000, (err) => {
 	if (err) {
 		console.log('Server is down');
