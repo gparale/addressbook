@@ -22,7 +22,7 @@ document.getElementById("loginAccount").addEventListener("click", () => {
     });
 });
 
-document.getElementById("signupAccount").addEventListener("click", () => {
+document.getElementById("createAccount").addEventListener("click", () => {
 	fetch('/resources', {
 		method: "POST",
         credentials: "include",
