@@ -3,11 +3,21 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const session = require('express-session')
 const hbs = require('hbs')
-const pg = require('pg')
+const { Pool, Client } = require('pg')
 
 const app = express();
 
-var dbURL = process.env.DATABASE_URL || "postgres://localhost:5432/postgres"; // change this per db name
+var dbURL = process.env.DATABASE_URL || "postgres://postgres:thegoodpass@localhost:5432/postgres"; // change this per db name
+
+const pool = new Pool({
+    connectionString: dbURL,
+})
+
+pool.query('SELECT username fROM USERS', (err, res) => {
+    //console.log(err, res)
+    console.log(res.rows[0].username)
+    pool.end()
+})
 
 app.use(express.static(__dirname + "/src"))
 app.use(bodyParser.json()) //Needed for when retrieving JSON from front-end
@@ -50,10 +60,9 @@ app.get("/hub", (request, response, next) =>{
 	response.send(request.session.myvar)
 })
 
-app.post("/register", function(req, resp){
-    var passcode = req.body.thePasscode;
-    var email = req.body.theEmail;
-    var username = req.body.theUsername;
+app.post("/signup", function(req, resp){
+    var username = req.body.name;
+    var passcode = req.body.pass;
     
     pg.connect(dbURL, function(err, client, done){
        if(err){
@@ -65,13 +74,13 @@ app.post("/register", function(req, resp){
            resp.send(obj);
         }
         
-        client.query("INSERT INTO users (username, passcode, email) VALUES ($1, $2, $3)", [username, passcode, email], function(err, result){
+        client.query("INSERT INTO users (username, passcode) VALUES ($1, $2, $3)", [username, passcode], function(err, result){
             done();
             if(err){
                 console.log(err);
                 var obj = {
                    status:"fail",
-                   msg:"Username/passcode/email is/are invalid"
+                   msg:"Username/passcode is/are invalid"
                 }
                 resp.send(obj);
             }
