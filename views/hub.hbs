@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Welcome {{username}}</title>
+    <link rel="stylesheet" type="text/css" href="/hub.css">
+</head>
+
+<body>
+	<header id="upper_menus">
+		<div>{{username}}</div>
+	</header>
+    <div id="left_selection">
+        {{#each sel}}
+        <div class="left_options">
+            <img class="left_opt_img" src="{{this.img_source}}"/>
+            <div class="left_opt_name">{{this.opt_name}}</div>
+        </div>
+        {{/each}}
+    </div>
+</body>
+
+</html>
