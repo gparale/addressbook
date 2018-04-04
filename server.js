@@ -12,11 +12,12 @@ const pool = new Pool({
     connectionString: dbURL,
 })
 
-pool.query('SELECT username fROM USERS', (err, res) => {
-    //console.log(err, res)
-    console.log(res.rows[0].username)
-    pool.end()
-})
+//pool.query('SELECT username fROM USERS WHERE password= $1', ["isiWoo"], (err, res) => {
+//    //console.log(err, res)
+//    console.log(res)
+//    //console.log(res.rows[0].username)
+//    pool.end()
+//})
 
 app.use(express.static(__dirname + "/src"))
 
@@ -32,19 +33,39 @@ app.get("/", (request, response) => {
     //response.end('This is a test for stuff')
 })
 
-app.post("/resources", (request, response, next) => {
-
-    if (request.body["request-type"] === "login") {
+app.post("/login", (request, response, next) => {
+    console.log(request.body["name"])
+    /* if (request.body["request-type"] === "login") {
         if (request.body["name"] === "glenn" && request.body["pass"] === "slit") {
             request.session.myvar = request.body
             response.json({ message: "Login Successful", url: "hub" })
         } else {
             response.json({ message: "Login Failed", url: "Message Failed" })
         }
-    } /*else if (request.body["request-type"] === "signup") {
-
-    }*/
-    //response.redirect("/hub")
+    } */
+    
+    pool.query('SELECT password, pk_id FROM USERS where username= $1', [ request.body["name"] ], (err, res) => {
+        console.log(res)
+        if(res.rows.length === 0){
+            response.json({ message: "Login Failed", url: "Message Failed" })
+        }else{
+            if(res.rows[0].password == request.body["pass"]){
+                //---------------------------------------------------------------------
+                var sess_pk_id = res.rows[0].pk_id;
+                //console.log(request.session)
+                //console.log(request.session.cookie._expires)
+                //console.log(request.session.cookie.originalMaxAge)
+                //console.log(request.sessionID)
+                pool.query("Insert into sessions (pk_id, s_id, sess, expire) VALUES ($1, $2, $3, $4)", [sess_pk_id, request.sessionID, request.session, request.session.cookie._expires]);
+                request.session.myvar = request.body
+                
+                //---------------------------------------------------------------------
+                response.json({ message: "Login Successful", url: "hub" })
+            }else{
+                response.json({ message: "Login Failed", url: "Message Failed" })
+            }
+        }
+    })
 })
 
 app.get("/hub", (request, response, next) => {
@@ -56,19 +77,9 @@ app.get("/hub", (request, response, next) => {
 })
 
 app.post("/signup", function(req, resp){
-    var username = req.body.name;
-    var passcode = req.body.pass;
-    
-    pg.connect(dbURL, function(err, client, done){
-       if(err){
-           console.log(err);
-           var obj = {
-               status:"fail",
-               msg:"CONNECTION FAIL"
-           }
-           resp.send(obj);
-        }
-    })
+    //var username = req.body.name;
+    //var passcode = req.body.pass;
+    console.log(request.body["name"])
 });
 
 app.listen(3000, (err) => {

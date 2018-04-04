@@ -1,13 +1,12 @@
 
 document.getElementById("loginAccount").addEventListener("click", () => {
-	fetch('/resources', {
+	fetch('/login', {
 		method: "POST",
         credentials: "include",
 		headers: {
 			"Content-Type": "application/json"
 		},
 		body: JSON.stringify({
-			"request-type": "login",
             "name": document.getElementById("loginUser").value,
 			"pass": document.getElementById("loginPwd").value
 		})
@@ -23,15 +22,14 @@ document.getElementById("loginAccount").addEventListener("click", () => {
 });
 
 document.getElementById("createAccount").addEventListener("click", () => {
-	fetch('/resources', {
+	fetch('/signup', {
 		method: "POST",
         credentials: "include",
 		headers: {
 			"Content-Type": "application/json"
 		},
 		body: JSON.stringify({
-            "request-type": "signup",
-			"name": document.getElementById("loginUser").value,
+			"firname": document.getElementById("loginUser").value,
 			"pass": document.getElementById("loginPwd").value
 		})
 	}).then((response) => {
