@@ -36,3 +36,13 @@
 	border-bottom: ridge #47a330 3px;
 	text-align: left;
 }
+
+.right_window{
+	position: absolute;
+	display: none;
+	width: 1510px;
+	height: 930px;
+	background-color: #1ad110;
+	right: 20px;
+	top: 70px;
+}

@@ -7,17 +7,22 @@
 </head>
 
 <body>
-	<header id="upper_menus">
-		<div>{{username}}</div>
-	</header>
+    <header id="upper_menus">
+        <div>{{username}}</div>
+    </header>
     <div id="left_selection">
         {{#each sel}}
         <div class="left_options">
-            <img class="left_opt_img" src="{{this.img_source}}"/>
+            <img class="left_opt_img" src="{{this.img_source}}" />
             <div class="left_opt_name">{{this.opt_name}}</div>
         </div>
         {{/each}}
     </div>
+    {{#each sel}}
+    <div class="right_window">
+        {{{this.layout}}} <!-- Triple squiggy for displaying the stuff-->
+    </div>
+    {{/each}}
 </body>
 
 </html>
