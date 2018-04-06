@@ -105,7 +105,8 @@ app.get("/hub", (request, response, next) => {
 
 app.post("/signup", function(request, response) {
     pool.query('SELECT MAX(pk_id) FROM users', (err, res) => {
-        var new_pk_id = "00" + (Number(res.rows[0].max) + 1).slice((new_id.length - 3), (new_id.length + 1))
+        var new_pk_id = "00" + (Number(res.rows[0].max) + 1)
+        new_pk_id = new_pk_id.slice(-3, -1) + new_pk_id.slice(-1)
         console.log(new_pk_id)
     })
     if ((request.body["fname"] === "") || (request.body["lname"] === "") || (request.body["uname"] === "") || (request.body["pword"] === "") || (request.body["cpword"] === "")) {
