@@ -103,10 +103,20 @@ app.get("/hub", (request, response, next) => {
     })
 })
 
-app.post("/signup", function(req, resp){
-    //var username = req.body.name;
-    //var passcode = req.body.pass;
-    console.log(request.body["name"])
+app.post("/signup", function(request, response) {
+    pool.query('SELECT MAX(pk_id) FROM users', (err, res) => {
+        var new_pk_id = "00" + (Number(res.rows[0].max) + 1).slice((new_id.length - 3), (new_id.length + 1))
+        console.log(new_pk_id)
+    })
+    if ((request.body["fname"] === "") || (request.body["lname"] === "") || (request.body["uname"] === "") || (request.body["pword"] === "") || (request.body["cpword"] === "")) {
+        response.json({ message: "Signup failed.", url: "Message Failed" })
+    }
+    else if (request.body["pword"] != request.body["cpword"]) {
+        response.json({ message: "Signup failed.", url: "Message Failed" })
+    }
+    else {
+        pool.query("Insert into users (pk_id, username, password, first_name, last_name) VALUES ($1, $2, $3, $4, $5)", [(curr_pk_id), request.body["uname"], request.body["pword"], request.body["fname"], request.body["lname"]]);
+    }
 });
 
 app.listen(3000, (err) => {

@@ -40,8 +40,8 @@
 .right_window{
 	position: absolute;
 	display: none;
-	width: 1510px;
-	height: 930px;
+	width: 70%;
+	height: 70%;
 	background-color: #1ad110;
 	right: 20px;
 	top: 70px;

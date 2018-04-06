@@ -29,8 +29,11 @@ document.getElementById("createAccount").addEventListener("click", () => {
 			"Content-Type": "application/json"
 		},
 		body: JSON.stringify({
-			"firname": document.getElementById("loginUser").value,
-			"pass": document.getElementById("loginPwd").value
+            "fname": document.getElementById("fname").value,
+            "lname": document.getElementById("lname").value,
+			"uname": document.getElementById("signupUser").value,
+			"pword": document.getElementById("signupPwd").value,
+            "cpword": document.getElementById("confirmPwd").value
 		})
 	}).then((response) => {
         return response.json();
