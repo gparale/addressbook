@@ -54,14 +54,14 @@ app.post("/login", (request, response, next) => {
 
     } */
     
-    pool.query('SELECT password, pk_id FROM USERS where username= $1', [ request.body["name"] ], (err, res) => {
+    pool.query('SELECT password, user_id FROM USERS where username= $1', [ request.body["name"] ], (err, res) => {
         console.log(res)
         if(res.rows.length === 0){
             response.json({ message: "Login Failed", url: "Message Failed" })
         }else{
             if(res.rows[0].password == request.body["pass"]){
                 //---------------------------------------------------------------------
-                var sess_pk_id = res.rows[0].pk_id;
+                var sess_pk_id = res.rows[0].user_id;
                 //console.log(request.session)
                 //console.log(request.session.cookie._expires)
                 //console.log(request.session.cookie.originalMaxAge)
@@ -104,11 +104,6 @@ app.get("/hub", (request, response, next) => {
 })
 
 app.post("/signup", function(request, response) {
-    pool.query('SELECT MAX(pk_id) FROM users', (err, res) => {
-        var new_pk_id = "00" + (Number(res.rows[0].max) + 1)
-        new_pk_id = new_pk_id.slice(-3, -1) + new_pk_id.slice(-1)
-        console.log(new_pk_id)
-    })
     if ((request.body["fname"] === "") || (request.body["lname"] === "") || (request.body["uname"] === "") || (request.body["pword"] === "") || (request.body["cpword"] === "")) {
         response.json({ message: "Signup failed.", url: "Message Failed" })
     }
@@ -116,7 +111,7 @@ app.post("/signup", function(request, response) {
         response.json({ message: "Signup failed.", url: "Message Failed" })
     }
     else {
-        pool.query("Insert into users (pk_id, username, password, first_name, last_name) VALUES ($1, $2, $3, $4, $5)", [(curr_pk_id), request.body["uname"], request.body["pword"], request.body["fname"], request.body["lname"]]);
+        pool.query("Insert into users (username, password, first_name, last_name) VALUES ($1, $2, $3, $4)", [request.body["uname"], request.body["pword"], request.body["fname"], request.body["lname"]]);
     }
 });
 
