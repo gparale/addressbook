@@ -80,25 +80,39 @@ app.post("/login", (request, response, next) => {
 
 app.get("/hub", (request, response, next) => {
     sessionInfos = request.session.myvar
-
     response.render("hub.hbs", {
-        username: sessionInfos["name"],
+        username: "Romy Lee",
         sel: [{
+            id_name: "profile",
             opt_name: "Profile",
             img_source: "https://d30y9cdsu7xlg0.cloudfront.net/png/138926-200.png",
             layout: profile({
                 fname: "Romy",
                 lname: "Li",
-                comment: "He's Romy Li"
-            })
+                comment: "He's Romy Li",
+
+                p_numbers: [
+                {number: "604 600 2312"}],
+
+                locs: [
+                {location: "3322 Atelier St, Therson, Arizona, USA"}
+                ]
+            }),
+            script: ""
         }, {
+            id_name: "contacts",
             opt_name: "Contacts",
             img_source: "http://www.gaby-moreno.com/administrator/public_html/css/ionicons/png/512/android-contacts.png",
-            layout: profile({
-                fname: "Romy",
-                lname: "Li",
-                comment: "He's Romy Li"
-            })
+            layout: contacts({
+                contact: [
+                {fname: "Li", lname: "Hue Son", p_number: "604 445 6212", location: "3432 Des St, Adres, Arizona, USA"},
+                {fname: "Pes", lname: "Hue Son", p_number: "604 445 3421", location: "3432 Des St, Adres, Arizona, USA"},
+                {fname: "Tommy", lname: "Ma", p_number: "604 232 8873", location: "12344 Titer Ave, Les Straud, California, USA"},
+                {fname: "Uder", lname: "Yeser", p_number: "212 656 5565", location: "1002 Log Drive, Preston, Wyoming, USA"}
+                ]
+                
+            }),
+            script: "/contacts.js"
         }]
     })
 })
@@ -114,6 +128,12 @@ app.post("/signup", function(request, response) {
         pool.query("Insert into users (username, password, first_name, last_name) VALUES ($1, $2, $3, $4)", [request.body["uname"], request.body["pword"], request.body["fname"], request.body["lname"]]);
     }
 });
+
+app.post("/logout", (request, response)=>{
+    pool.query('DELETE FROM sessions WHERE s_id= $1', [request.session.ID]);
+    request.session.destroy()
+    response.json({status: "OK", message:"Log out successfully"})
+})
 
 app.listen(3000, (err) => {
     if (err) {
