@@ -69,6 +69,10 @@ document.getElementsByClassName("close")[1].onclick = function() {
     logModal.style.display = "none";
 }
 
+document.getElementById("createAccount").onclick = function() {
+    signModal.style.display = "none";
+}
+
 // When the user clicks anywhere outside of the modal, close it
 window.onclick = function(event) {
     if ((event.target == signModal) || (event.target == logModal)) {
