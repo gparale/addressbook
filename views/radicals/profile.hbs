@@ -7,7 +7,23 @@ Personal Info
 	Additional Comments: {{comment}}
 	</div>
 </div>
-<div>
-Phone numbers
 
+<div>
+
+Phone numbers
+{{#each p_numbers}}
+	<div>
+	{{this.number}}
+	</div>
+{{/each}}
+
+</div>
+
+<div>
+Locations
+{{#each locs}}
+	<div>
+	{{this.location}}
+	</div>
+{{/each}}
 </div>

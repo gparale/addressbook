@@ -25,6 +25,7 @@ app.use(express.static(__dirname + "/src"))
 
 app.use((request, response, next)=>{
     profile = hbs.compile(fs.readFileSync(__dirname + "/views/radicals/profile.hbs", 'utf8'))
+    contacts = hbs.compile(fs.readFileSync(__dirname + "/views/radicals/contacts.hbs", 'utf8'))
     next();
 })
 
@@ -44,6 +45,7 @@ app.get("/", (request, response) => {
 })
 
 app.post("/login", (request, response, next) => {
+    console.log(request.sessionID)
     /*if (request.body["request-type"] === "login") {
         if (request.body["name"] === "glenn" && request.body["pass"] === "slit") {
             request.session.myvar = request.body
@@ -67,7 +69,7 @@ app.post("/login", (request, response, next) => {
                 //console.log(request.session.cookie.originalMaxAge)
                 //console.log(request.sessionID)
                 pool.query("Insert into sessions (pk_id, s_id, sess, expire) VALUES ($1, $2, $3, $4)", [sess_pk_id, request.sessionID, request.session, request.session.cookie._expires]);
-                request.session.myvar = request.body
+                request.session.user_id = res.rows[0].user_id
                 
                 //---------------------------------------------------------------------
                 response.json({ message: "Login Successful", url: "hub" })
@@ -79,7 +81,19 @@ app.post("/login", (request, response, next) => {
 })
 
 app.get("/hub", (request, response, next) => {
-    sessionInfos = request.session.myvar
+    
+    console.log(request.sessionID)
+    
+    user_id = request.session.user_id
+    
+    user_id = pool.query("SELECT user_id from users where s_id = $1", [user_id], (err, res)=>{
+        console.log(res.rows[0])
+        return res.rows[0]
+    })
+    
+    console.log(user_id)
+    information = {}
+    
     response.render("hub.hbs", {
         username: "Romy Lee",
         sel: [{

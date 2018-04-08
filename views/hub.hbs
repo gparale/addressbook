@@ -8,21 +8,35 @@
 
 <body>
     <header id="upper_menus">
-        <div>{{username}}</div>
+        <div>Hello, user {{username}}</div>
+        <div id="options">
+        Options
+        <div id="logout">Logout</div>
+        </div>
     </header>
+    
     <div id="left_selection">
         {{#each sel}}
-        <div class="left_options">
+        <div class="left_options" id="{{this.id_name}}_button">
             <img class="left_opt_img" src="{{this.img_source}}" />
             <div class="left_opt_name">{{this.opt_name}}</div>
         </div>
         {{/each}}
     </div>
+
     {{#each sel}}
-    <div class="right_window">
+
+
+    <div class="right_window" id="{{this.id_name}}">
         {{{this.layout}}} <!-- Triple squiggy for displaying the stuff-->
     </div>
+
+    {{#if this.script}}
+        <script src="{{this.script}}"></script>
+    {{/if}}
+
     {{/each}}
+    <script src="/hub.js"></script>
 </body>
 
 </html>
