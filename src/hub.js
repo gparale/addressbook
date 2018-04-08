@@ -1,24 +1,25 @@
 buttonSelection = document.getElementsByClassName("left_options")
 frames = document.getElementsByClassName("right_window")
 
-document.getElementById("logout").addEventListener("click", ()=>{
-	fetch("/logout", {
-		method: "POST",
-		credentials: "include",
-		headers: {
-			"Content-Type": "application/json"
-		},
-		body: JSON.stringify({
+document.getElementById("logout").addEventListener("click", () => {
+    fetch("/logout", {
+        method: "POST",
+        credientials: "include",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
             "command": "End Session"
-		})
-	}).then((response)=>{
-		return response.json()
-	}).then((json)=>{
-		if (json.status === "OK"){
-			window.location.assign("/")
-		}
-	})
+        })
+    }).then((response) => {
+        return response.json()
+    }).then((json) => {
+        if (json.status === "OK") {
+            window.location.assign("/")
+        }
+    })
 })
+
 for (i = 0; i < buttonSelection.length; i++) {
 	button_id = buttonSelection[i].id
 	document.getElementById(button_id).addEventListener("click", function(){ //Use the function() instead of ()=>{} when referring to this.something

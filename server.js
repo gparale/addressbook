@@ -84,11 +84,15 @@ app.get("/hub", (request, response, next) => {
     
     console.log(request.sessionID)
     
-    user_id = request.session.user_id
+    //user_id = request.session.user_id
     
-    user_id = pool.query("SELECT user_id from users where s_id = $1", [user_id], (err, res)=>{
+//    user_id = pool.query("SELECT user_id from users where s_id = $1", [user_id], (err, res)=>{
+//        console.log(res.rows[0])
+//        return res.rows[0]
+//    })
+    
+    user_id = pool.query("SELECT username FROM users, sessions WHERE (((users.user_id::text) = sessions.pk_id) AND sessions.s_id = $1)", [request.sessionID], (err, res)=>{
         console.log(res.rows[0])
-        return res.rows[0]
     })
     
     console.log(user_id)
@@ -119,7 +123,7 @@ app.get("/hub", (request, response, next) => {
             img_source: "http://www.gaby-moreno.com/administrator/public_html/css/ionicons/png/512/android-contacts.png",
             layout: contacts({
                 contact: [
-                {fname: "Li", lname: "Hue Son", p_number: "604 445 6212", location: "3432 Des St, Adres, Arizona, USA"},
+                {fname: "Li", lname: "Hue Son", p_number: "604 445 6212", location: "555 Seymour Street"},
                 {fname: "Pes", lname: "Hue Son", p_number: "604 445 3421", location: "3432 Des St, Adres, Arizona, USA"},
                 {fname: "Tommy", lname: "Ma", p_number: "604 232 8873", location: "12344 Titer Ave, Les Straud, California, USA"},
                 {fname: "Uder", lname: "Yeser", p_number: "212 656 5565", location: "1002 Log Drive, Preston, Wyoming, USA"}
@@ -144,7 +148,7 @@ app.post("/signup", function(request, response) {
 });
 
 app.post("/logout", (request, response)=>{
-    pool.query('DELETE FROM sessions WHERE s_id= $1', [request.session.ID]);
+    //pool.query('DELETE FROM sessions WHERE s_id= $1', [request.session.ID]);
     request.session.destroy()
     response.json({status: "OK", message:"Log out successfully"})
 })
