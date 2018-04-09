@@ -12,13 +12,9 @@ document.getElementById("update").addEventListener("click", () => {
 })
 
 window.onclick = function(event) {
-    if (event.target == document.getElementById("addContact")) {
-        document.getElementById("addContact").style.display = "none"
-
-    }
-    if (event.target == document.getElementById("updateInfo")) {
+    if ((event.target == document.getElementById("addContact")) || (event.target == document.getElementById("updateInfo"))) {
+        document.getElementById("addContact").style.display = "none";
         document.getElementById("updateInfo").style.display = "none"
-     
     }
     if (event.target == document.getElementById("a_view")) {
         document.getElementById("a_updateRev").src = "https://www.google.com/maps/embed/v1/place?key=AIzaSyBo7uKcrJKGkcPuoKgo-Si-pNHAHE4V-5U&q=" + document.getElementById("a_address").value

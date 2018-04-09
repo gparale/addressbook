@@ -19,24 +19,28 @@
         </div>
     </header>
     
-    <div id="addContact">
-        <input type="text" placeholder="First Name" id="fname"/><br/>
-        <input type="text" placeholder="Last Name" id="lname"/><br/>
-        <input type="text" placeholder="Phone Number" id="a_phone"/><br/>
-        <input type="text" placeholder="Address" id="a_address"/><br/>
-        <iframe id="a_updateRev" frameborder="0" style="border:0" src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBo7uKcrJKGkcPuoKgo-Si-pNHAHE4V-5U&q=555+seymour+Street" allowfullscreen>
-        </iframe><br/>
-        <button id="a_view">View</button><br/>
-        <button id="add_contact">Add Contact</button>
+    <div id="addContact" class="modal">
+        <div class="modal-content">
+            <input type="text" placeholder="First Name" class="modalInput" id="fname"/><br/>
+            <input type="text" placeholder="Last Name" class="modalInput" id="lname"/><br/>
+            <input type="text" placeholder="Phone Number" class="modalInput" id="a_phone"/><br/>
+            <input type="text" placeholder="Address" class="modalInput" id="a_address"/><br/>
+            <iframe id="a_updateRev" frameborder="0" style="border:0" src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBo7uKcrJKGkcPuoKgo-Si-pNHAHE4V-5U&q=555+seymour+Street" allowfullscreen>
+            </iframe><br/>
+            <button id="a_view" class="modalButton">View</button><br/>
+            <button id="add_contact" class="modalButton">Add Contact</button>
+        </div>
     </div>
     
-    <div id="updateInfo">
-        <input type="text" placeholder="Phone Number" id="u_phone"/><br/>
-        <input type="text" placeholder="Address" id="u_address"/><br/>
-        <iframe id="u_updateRev" frameborder="0" style="border:0" src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBo7uKcrJKGkcPuoKgo-Si-pNHAHE4V-5U&q=555+seymour+Street" allowfullscreen>
-        </iframe><br/>
-        <button id="u_view">View</button><br/>
-        <button id="update_info">Update</button>
+    <div id="updateInfo" class="modal">
+        <div class="modal-content">
+            <input type="text" placeholder="Phone Number" class="modalInput" id="u_phone"/><br/>
+            <input type="text" placeholder="Address" class="modalInput" id="u_address"/><br/>
+            <iframe id="u_updateRev" frameborder="0" style="border:0" src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBo7uKcrJKGkcPuoKgo-Si-pNHAHE4V-5U&q=555+seymour+Street" allowfullscreen>
+            </iframe><br/>
+            <button id="u_view" class="modalButton">View</button><br/>
+            <button id="update_info" class="modalButton">Update</button>
+        </div>
     </div>
 
     <div id="left_selection">

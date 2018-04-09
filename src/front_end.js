@@ -30,7 +30,7 @@ document.getElementById("createAccount").addEventListener("click", () => {
 		},
 		body: JSON.stringify({
 			"user": document.getElementById("signupUser").value,
-			"pass": document.getElementById("confirmPwd").value,
+			"pass": document.getElementById("signupPwd").value,
 			"fname": document.getElementById("fname").value,
 			"lname": document.getElementById("lname").value
 		})
