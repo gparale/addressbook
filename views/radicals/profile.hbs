@@ -3,9 +3,6 @@ Personal Info
 	<div>
 	Name : {{fname}}{{lname}}
 	</div>
-	<div>
-	Additional Comments: {{comment}}
-	</div>
 </div>
 
 <div>
@@ -22,8 +19,12 @@ Phone numbers
 <div>
 Locations
 {{#each locs}}
+	{{#if this.location}}
 	<div>
-	{{this.location}}
+            {{this.location}} <br>
+            <iframe width="500" height="240" frameborder="0" style="border:0" src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBo7uKcrJKGkcPuoKgo-Si-pNHAHE4V-5U&q={{this.location}}" allowfullscreen>
+            </iframe>        
 	</div>
+	{{/if}}
 {{/each}}
 </div>

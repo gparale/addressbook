@@ -46,7 +46,6 @@
 	background-color: #7aff75;
 	display: block;
 	overflow: scroll;
-    z-index: -1;
 }
 .contacts{
 	position:relative;
@@ -89,6 +88,24 @@
 	margin:auto;
 }
 
+#addContact {
+    z-index: 1;
+    top: 20%;
+    left: 40%;
+    position: absolute;
+    background-color: white;
+    display: none;
+}
+
+#updateInfo {
+    z-index: 1;
+    top: 20%;
+    left: 40%;
+    position: absolute;
+    background-color: white;
+    display: none;
+}
+
 #options {
     position: relative;
     display: inline-block;
@@ -112,22 +129,4 @@
 
 #options:hover .dropdown-content {
     display: block;
-}
-
-#addContact {
-    z-index: 2;
-    top: 20%;
-    left: 40%;
-    position: absolute;
-    background-color: white;
-    display: none;
-}
-
-#updateInfo {
-    z-index: 2;
-    top: 20%;
-    left: 40%;
-    position: absolute;
-    background-color: white;
-    display: none;
 }

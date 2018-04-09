@@ -10,8 +10,8 @@
     <header id="upper_menus">
         <div>Hello, user {{username}}</div>
         <div id="options">
-            Options
-            <div class="dropdown-content">
+        Options
+        <div class="dropdown-content">
                 <div id="add">Add Contact</div>
                 <div id="update">Edit Profile</div>
                 <div id="logout">Logout</div>
@@ -19,6 +19,26 @@
         </div>
     </header>
     
+    <div id="addContact">
+        <input type="text" placeholder="First Name" id="fname"/><br/>
+        <input type="text" placeholder="Last Name" id="lname"/><br/>
+        <input type="text" placeholder="Phone Number" id="a_phone"/><br/>
+        <input type="text" placeholder="Address" id="a_address"/><br/>
+        <iframe id="a_updateRev" frameborder="0" style="border:0" src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBo7uKcrJKGkcPuoKgo-Si-pNHAHE4V-5U&q=555+seymour+Street" allowfullscreen>
+        </iframe><br/>
+        <button id="a_view">View</button><br/>
+        <button id="add_contact">Add Contact</button>
+    </div>
+    
+    <div id="updateInfo">
+        <input type="text" placeholder="Phone Number" id="u_phone"/><br/>
+        <input type="text" placeholder="Address" id="u_address"/><br/>
+        <iframe id="u_updateRev" frameborder="0" style="border:0" src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBo7uKcrJKGkcPuoKgo-Si-pNHAHE4V-5U&q=555+seymour+Street" allowfullscreen>
+        </iframe><br/>
+        <button id="u_view">View</button><br/>
+        <button id="update_info">Update</button>
+    </div>
+
     <div id="left_selection">
         {{#each sel}}
         <div class="left_options" id="{{this.id_name}}_button">
@@ -40,28 +60,7 @@
     {{/if}}
 
     {{/each}}
-    
-    <div id="addContact">
-        <input type="text" placeholder="First Name" id="fname"/><br/>
-        <input type="text" placeholder="Last Name" id="lname"/><br/>
-        <input type="text" placeholder="Phone Number" id="a_phone"/><br/>
-        <input type="text" placeholder="Address" id="a_address"/><br/>
-        <iframe id="updateRev" frameborder="0" style="border:0" src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBo7uKcrJKGkcPuoKgo-Si-pNHAHE4V-5U&q=555+seymour+Street" allowfullscreen>
-        </iframe><br/>
-        <button id="view">View</button><br/>
-        <button id="add_contact">Add Contact</button>
-    </div>
-    
-    <div id="updateInfo">
-        <input type="text" placeholder="Phone Number" id="u_phone"/><br/>
-        <input type="text" placeholder="Address" id="u_address"/><br/>
-        <iframe id="updateRev" frameborder="0" style="border:0" src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBo7uKcrJKGkcPuoKgo-Si-pNHAHE4V-5U&q=555+seymour+Street" allowfullscreen>
-        </iframe><br/>
-        <button id="view">View</button><br/>
-        <button id="update_info">Update</button>
-    </div>
     <script src="/hub.js"></script>
-    
 </body>
 
 </html>

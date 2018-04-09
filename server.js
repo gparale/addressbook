@@ -10,7 +10,7 @@ const pgSession = require('connect-pg-simple')(session)
 
 const app = express();
 
-var dbURL = process.env.DATABASE_URL || "postgres://postgres:thegoodpass@localhost:5432/postgres"; // change this per db name
+var dbURL = process.env.DATABASE_URL || "postgres://postgres:thegreatpass@localhost:5432/callcenter"; // change this per db name
 
 const pgpool = new Pool({
     connectionString: dbURL,
@@ -80,7 +80,7 @@ app.get("/hub", (request, response, next) => {
     pgpool.query('insert into sess_user(sid, user_id) values ( $1, $2)', [request.sessionID, sessionInfos])
     pgpool.query('select username, fname, lname, p_numbers, locate, firstname, lastname, address, phone from (select * from users where user_id = $1) n1 left join (select * from contacts) n2 on (n1.user_id =n2.user_id)', [sessionInfos], (err, res) => {
         if (err || res.rows.length === 0) {
-            response.json({message:"NOK"})
+            response.json({ message: "NOK" })
         } else {
             profile_info = { fname: res.rows[0].fname, lname: res.rows[0].lname, p_numbers: [{ number: res.rows[0].p_numbers }], locs: [{ location: res.rows[0].locate }] }
             contactees = []
@@ -135,18 +135,23 @@ app.post("/update", (request, response) => {
 })
 
 app.post("/addcontact", (request, response) => {
-    sessionInfos = request.session.user_id
-    new_fname = request.body["fname"]
-    new_lname = request.body["lname"]
-    new_phone = request.body["phone"]
-    new_address = request.body["address"]
-    pgpool.query('insert into contacts(user_id, firstname, lastname, address, phone) values ($1, $2, $3, $4, $5)', [sessionInfos, new_fname, new_lname, new_address, new_phone], (err, res) => {
-        if (err) {
-            response.json({ status: "NOK", message: "Contact Not Added" })
-        } else {
-            response.json({ status: "OK", message: "Contact Added" })
-        }
-    })
+    if (!(request.body["fname"] === "") && !(request.body["lname"] === "")) {
+        sessionInfos = request.session.user_id
+        new_fname = request.body["fname"]
+        new_lname = request.body["lname"]
+        new_phone = request.body["phone"]
+        new_address = request.body["address"]
+        pgpool.query('insert into contacts(user_id, firstname, lastname, address, phone) values ($1, $2, $3, $4, $5)', [sessionInfos, new_fname, new_lname, new_address, new_phone], (err, res) => {
+            if (err) {
+                console.log(err);
+                response.json({ status: "NOK", message: "Contact Not Added" })
+            } else {
+                response.json({ status: "OK", message: "Contact Added" })
+            }
+        })
+    } else {
+        response.json({ status: "NOK", message: "Required fields not filled" })
+    }
 })
 //Code copy ends here
 //--------------------------------------------------------------------------------------------------------------------------
