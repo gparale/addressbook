@@ -6,24 +6,26 @@ const fs = require('fs')
 
 const { Pool, Client } = require('pg')
 
+const pgSession = require('connect-pg-simple')(session)
+
 const app = express();
 
-var dbURL = process.env.DATABASE_URL || "postgres://postgres:thegoodpass@localhost:5432/postgres"; // change this per db name
+var dbURL = process.env.DATABASE_URL || "postgres://postgres:thegreatpass@localhost:5432/callcenter"; // change this per db name
 
-const pool = new Pool({
+const pgpool = new Pool({
     connectionString: dbURL,
 })
 
-//pool.query('SELECT username fROM USERS WHERE password= $1', ["isiWoo"], (err, res) => {
-//    //console.log(err, res)
-//    console.log(res)
-//    //console.log(res.rows[0].username)
-//    pool.end()
-//})
+/*pgpool.query('SELECT username fROM USERS WHERE password= $1', ["LisiWoo"], (err, res) => {
+    //console.log(err, res)
+    console.log(res.rows[0].username)
+    //console.log(res.rows[0].username)
+    pool.end()
+})*/
 
 app.use(express.static(__dirname + "/src"))
 
-app.use((request, response, next)=>{
+app.use((request, response, next) => {
     profile = hbs.compile(fs.readFileSync(__dirname + "/views/radicals/profile.hbs", 'utf8'))
     contacts = hbs.compile(fs.readFileSync(__dirname + "/views/radicals/contacts.hbs", 'utf8'))
     next();
@@ -34,8 +36,19 @@ hbs.registerPartials(__dirname + "/views/partials")
 
 
 app.use(bodyParser.json()) //Needed for when retrieving JSON from front-end
+
 app.set('view engine', 'hbs')
-app.use(session({ secret: 'tolkien', saveUninitialized: false, resave: false, cookie: { maxAge: 5 * 60000 } }))
+
+app.use(session({
+    secret: 'tolkien',
+    store: new pgSession({
+        pool: pgpool,
+        tableName: 'session'
+    }),
+    saveUninitialized: false,
+    resave: false,
+    cookie: { maxAge: 60 * 60000 }
+}))
 
 
 app.get("/", (request, response) => {
@@ -44,114 +57,118 @@ app.get("/", (request, response) => {
     //response.end('This is a test for stuff')
 })
 
-app.post("/login", (request, response, next) => {
-    console.log(request.sessionID)
-    /*if (request.body["request-type"] === "login") {
-        if (request.body["name"] === "glenn" && request.body["pass"] === "slit") {
-            request.session.myvar = request.body
-            response.json({ message: "Login Successful", url: "hub" })
+app.post("/login", (request, response) => {
+    pgpool.query('SELECT password, user_id FROM users WHERE username = $1', [request.body["user"]], (err, res) => {
+        if (res.rows.length === 0) {
+            response.json({ message: "Login Failed", url: "Message Failed" })
         } else {
-            response.json({ message: "Login Failed", url: "Message Failed" })
-        }
-
-    } */
-    
-    pool.query('SELECT password, user_id FROM USERS where username= $1', [ request.body["name"] ], (err, res) => {
-        console.log(res)
-        if(res.rows.length === 0){
-            response.json({ message: "Login Failed", url: "Message Failed" })
-        }else{
-            if(res.rows[0].password == request.body["pass"]){
-                //---------------------------------------------------------------------
-                var sess_pk_id = res.rows[0].user_id;
-                //console.log(request.session)
-                //console.log(request.session.cookie._expires)
-                //console.log(request.session.cookie.originalMaxAge)
-                //console.log(request.sessionID)
-                pool.query("Insert into sessions (pk_id, s_id, sess, expire) VALUES ($1, $2, $3, $4)", [sess_pk_id, request.sessionID, request.session, request.session.cookie._expires]);
+            if (res.rows[0].password == request.body["pass"]) {
                 request.session.user_id = res.rows[0].user_id
-                
-                //---------------------------------------------------------------------
                 response.json({ message: "Login Successful", url: "hub" })
-            }else{
+            } else {
                 response.json({ message: "Login Failed", url: "Message Failed" })
             }
         }
     })
 })
 
+//---------------------------------------------------------------------------------------------------------------
+/* From this line, look at the additions for the hub and the logout button*/
+//FRONT END CALL CENTRE HUB
 app.get("/hub", (request, response, next) => {
-    
-    console.log(request.sessionID)
-    
-    //user_id = request.session.user_id
-    
-//    user_id = pool.query("SELECT user_id from users where s_id = $1", [user_id], (err, res)=>{
-//        console.log(res.rows[0])
-//        return res.rows[0]
-//    })
-    
-    user_id = pool.query("SELECT username FROM users, sessions WHERE (((users.user_id::text) = sessions.pk_id) AND sessions.s_id = $1)", [request.sessionID], (err, res)=>{
-        console.log(res.rows[0])
+    sessionInfos = request.session.user_id
+    pgpool.query('insert into sess_user(sid, user_id) values ( $1, $2)', [request.sessionID, sessionInfos])
+    pgpool.query('select username, fname, lname, p_numbers, locate, firstname, lastname, address, phone from (select * from users where user_id = $1) n1 left join (select * from contacts) n2 on (n1.user_id =n2.user_id)', [sessionInfos], (err, res) => {
+        if (err || res.rows.length === 0) {
+            response.json({message:"NOK"})
+        } else {
+            profile_info = { fname: res.rows[0].fname, lname: res.rows[0].lname, p_numbers: [{ number: res.rows[0].p_numbers }], locs: [{ location: res.rows[0].locate }] }
+            contactees = []
+
+            for (i = 0; i < res.rows.length; i++) {
+                cont_info = { fname: res.rows[i].firstname, lname: res.rows[i].lastname, p_number: res.rows[i].phone, location: res.rows[i].address }
+                contactees.push(cont_info)
+            }
+            response.render("hub.hbs", {
+                username: res.rows[0].username,
+                sel: [{
+                    id_name: "profile",
+                    opt_name: "Profile",
+                    img_source: "https://d30y9cdsu7xlg0.cloudfront.net/png/138926-200.png",
+                    layout: profile(profile_info),
+                    script: ""
+                }, {
+                    id_name: "contacts",
+                    opt_name: "Contacts",
+                    img_source: "http://www.gaby-moreno.com/administrator/public_html/css/ionicons/png/512/android-contacts.png",
+                    layout: contacts({
+                        contact: contactees
+
+                    }),
+                    script: "/contacts.js"
+                }]
+            })
+        }
+
     })
-    
-    console.log(user_id)
-    information = {}
-    
-    response.render("hub.hbs", {
-        username: "Romy Lee",
-        sel: [{
-            id_name: "profile",
-            opt_name: "Profile",
-            img_source: "https://d30y9cdsu7xlg0.cloudfront.net/png/138926-200.png",
-            layout: profile({
-                fname: "Romy",
-                lname: "Li",
-                comment: "He's Romy Li",
 
-                p_numbers: [
-                {number: "604 600 2312"}],
+})
 
-                locs: [
-                {location: "3322 Atelier St, Therson, Arizona, USA"}
-                ]
-            }),
-            script: ""
-        }, {
-            id_name: "contacts",
-            opt_name: "Contacts",
-            img_source: "http://www.gaby-moreno.com/administrator/public_html/css/ionicons/png/512/android-contacts.png",
-            layout: contacts({
-                contact: [
-                {fname: "Li", lname: "Hue Son", p_number: "604 445 6212", location: "555 Seymour Street"},
-                {fname: "Pes", lname: "Hue Son", p_number: "604 445 3421", location: "3432 Des St, Adres, Arizona, USA"},
-                {fname: "Tommy", lname: "Ma", p_number: "604 232 8873", location: "12344 Titer Ave, Les Straud, California, USA"},
-                {fname: "Uder", lname: "Yeser", p_number: "212 656 5565", location: "1002 Log Drive, Preston, Wyoming, USA"}
-                ]
-                
-            }),
-            script: "/contacts.js"
-        }]
+//LOGOUT FUNCTION
+app.post("/logout", (request, response) => {
+    request.session.destroy()
+    response.json({ status: "OK", message: "Log out successfully" })
+
+})
+
+app.post("/update", (request, response) => {
+    sessionInfos = request.session.user_id
+    new_phone = request.body["phone"]
+    new_address = request.body["address"]
+    pgpool.query('update users set p_numbers = $2, locate = $3 where user_id = $1', [sessionInfos, new_phone, new_address], (err, res) => {
+        if (err) {
+            response.json({ status: "NOK", message: "Update Not Added" })
+        } else {
+            response.json({ status: "OK", message: "Update Added" })
+        }
     })
 })
 
-app.post("/signup", function(request, response) {
-    if ((request.body["fname"] === "") || (request.body["lname"] === "") || (request.body["uname"] === "") || (request.body["pword"] === "") || (request.body["cpword"] === "")) {
-        response.json({ message: "Signup failed.", url: "Message Failed" })
-    }
-    else if (request.body["pword"] != request.body["cpword"]) {
-        response.json({ message: "Signup failed.", url: "Message Failed" })
-    }
-    else {
-        pool.query("Insert into users (username, password, first_name, last_name) VALUES ($1, $2, $3, $4)", [request.body["uname"], request.body["pword"], request.body["fname"], request.body["lname"]]);
+app.post("/addcontact", (request, response) => {
+    sessionInfos = request.session.user_id
+    new_fname = request.body["fname"]
+    new_lname = request.body["lname"]
+    new_phone = request.body["phone"]
+    new_address = request.body["address"]
+    pgpool.query('insert into contacts(user_id, firstname, lastname, address, phone) values ($1, $2, $3, $4, $5)', [sessionInfos, new_fname, new_lname, new_address, new_phone], (err, res) => {
+        if (err) {
+            response.json({ status: "NOK", message: "Contact Not Added" })
+        } else {
+            response.json({ status: "OK", message: "Contact Added" })
+        }
+    })
+})
+//Code copy ends here
+//--------------------------------------------------------------------------------------------------------------------------
+
+app.post("/signup", function(req, resp) {
+    if (!(req.body["fname"] === "") && !(req.body["lname"] === "") && !(req.body["user"] === "") && !(req.body["pass"] === "")) {
+        pgpool.query('insert into users(username, password, fname, lname) values($1, $2, $3, $4)', [req.body["user"], req.body["pass"], req.body["fname"], req.body["lname"]], (err, res) => {
+            if (err) {
+                resp.json({ status: "NOK", message: "Signup Failed: Username or Password already in use" })
+            } else {
+                pgpool.query('SELECT user_id FROM users WHERE username = $1', [req.body["user"]], (err, res) => {
+                    req.session.user_id = res.rows[0].user_id
+                    resp.json({ status: "OK", url: "hub" })
+                })
+            }
+
+        })
+
+    } else {
+        resp.json({ status: "NOK", message: "Signup Failed: Failed to fill required fields" })
     }
 });
-
-app.post("/logout", (request, response)=>{
-    //pool.query('DELETE FROM sessions WHERE s_id= $1', [request.session.ID]);
-    request.session.destroy()
-    response.json({status: "OK", message:"Log out successfully"})
-})
 
 app.listen(3000, (err) => {
     if (err) {

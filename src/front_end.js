@@ -7,7 +7,7 @@ document.getElementById("loginAccount").addEventListener("click", () => {
 			"Content-Type": "application/json"
 		},
 		body: JSON.stringify({
-            "name": document.getElementById("loginUser").value,
+            "user": document.getElementById("loginUser").value,
 			"pass": document.getElementById("loginPwd").value
 		})
 	}).then((response) => {
@@ -29,16 +29,18 @@ document.getElementById("createAccount").addEventListener("click", () => {
 			"Content-Type": "application/json"
 		},
 		body: JSON.stringify({
-			"firname": document.getElementById("loginUser").value,
-			"pass": document.getElementById("loginPwd").value
+			"user": document.getElementById("signupUser").value,
+			"pass": document.getElementById("confirmPwd").value,
+			"fname": document.getElementById("fname").value,
+			"lname": document.getElementById("lname").value
 		})
 	}).then((response) => {
         return response.json();
 	}).then((json)=>{
-		if(json.message === "Signup Successful"){
+		if(json.status === "OK"){
 			window.location.assign(json.url)
 		}else{
-			alert("Signup Failed");
+			alert(json.message);
 		}
         
     });
