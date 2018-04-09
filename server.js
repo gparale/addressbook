@@ -10,7 +10,7 @@ const pgSession = require('connect-pg-simple')(session)
 
 const app = express();
 
-var dbURL = process.env.DATABASE_URL || "postgres://postgres:thegreatpass@localhost:5432/callcenter"; // change this per db name
+var dbURL = process.env.DATABASE_URL || "postgres://postgres:thegoodpass@localhost:5432/postgres"; // change this per db name
 
 const pgpool = new Pool({
     connectionString: dbURL,
