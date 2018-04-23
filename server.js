@@ -12,9 +12,9 @@ const app = express();
 
 var dbURL = process.env.DATABASE_URL || "postgres://postgres:thegoodpass@localhost:5432/postgres"; // change this per db name
 
-const pgpool = new Pool({
+/*const pgpool = new Pool({
     connectionString: dbURL,
-})
+})*/
 
 /*pgpool.query('SELECT username fROM USERS WHERE password= $1', ["LisiWoo"], (err, res) => {
     //console.log(err, res)
@@ -58,7 +58,7 @@ app.get("/", (request, response) => {
 })
 
 app.post("/login", (request, response) => {
-    pgpool.query('SELECT password, user_id FROM users WHERE username = $1', [request.body["user"]], (err, res) => {
+    /*pgpool.query('SELECT password, user_id FROM users WHERE username = $1', [request.body["user"]], (err, res) => {
         if (res.rows.length === 0) {
             response.json({ message: "Login Failed", url: "Message Failed" })
         } else {
@@ -70,7 +70,7 @@ app.post("/login", (request, response) => {
             }
         }
     })
-})
+})*/
 
 //---------------------------------------------------------------------------------------------------------------
 /* From this line, look at the additions for the hub and the logout button*/
