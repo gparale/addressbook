@@ -10,11 +10,13 @@ const fs = require('fs')
 
 const app = express();
 
-// var dbURL = process.env.DATABASE_URL || "postgres://postgres:thegreatpass@localhost:5432/callcenter"; // change this per db name
 
-// const pgpool = new Pool({
-//     connectionString: dbURL,
-// })
+// var dbURL = process.env.DATABASE_URL || "postgres://postgres:thegoodpass@localhost:5432/postgres"; // change this per db name
+
+/*const pgpool = new Pool({
+    connectionString: dbURL,
+})*/
+
 
 /*pgpool.query('SELECT username fROM USERS WHERE password= $1', ["LisiWoo"], (err, res) => {
     //console.log(err, res)
@@ -57,6 +59,7 @@ app.get("/", (request, response) => {
 })
 
 app.post("/login", (request, response) => {
+
     // pgpool.query('SELECT password, user_id FROM users WHERE username = $1', [request.body["user"]], (err, res) => {
     //     if (res.rows.length === 0) {
     //         response.json({ message: "Login Failed", url: "Message Failed" })
@@ -83,6 +86,7 @@ app.post("/login", (request, response) => {
 /* From this line, look at the additions for the hub and the logout button*/
 //FRONT END CALL CENTRE HUB
 app.get("/hub", (request, response, next) => {
+
     // sessionInfos = request.session.user_id
     // pgpool.query('insert into sess_user(sid, user_id) values ( $1, $2)', [request.sessionID, sessionInfos])
     // pgpool.query('select username, fname, lname, p_numbers, locate, firstname, lastname, address, phone from (select * from users where user_id = $1) n1 left join (select * from contacts) n2 on (n1.user_id =n2.user_id)', [sessionInfos], (err, res) => {
@@ -149,16 +153,17 @@ app.get("/hub", (request, response, next) => {
             script: "/contacts.js"
         }]
     })
+
 })
 
 //LOGOUT FUNCTION
 app.post("/logout", (request, response) => {
     // request.session.destroy()
     response.json({ status: "OK", message: "Log out successfully" })
-
 })
 
 app.post("/update", (request, response) => {
+
     // sessionInfos = request.session.user_id
     // new_phone = request.body["phone"]
     // new_address = request.body["address"]
@@ -196,6 +201,7 @@ app.post("/addcontact", (request, response) => {
 //--------------------------------------------------------------------------------------------------------------------------
 
 app.post("/signup", function(req, resp) {
+
     // if (!(req.body["fname"] === "") && !(req.body["lname"] === "") && !(req.body["user"] === "") && !(req.body["pass"] === "")) {
     //     pgpool.query('insert into users(username, password, fname, lname) values($1, $2, $3, $4)', [req.body["user"], req.body["pass"], req.body["fname"], req.body["lname"]], (err, res) => {
     //         if (err) {
@@ -213,6 +219,7 @@ app.post("/signup", function(req, resp) {
     //     resp.json({ status: "NOK", message: "Signup Failed: Failed to fill required fields" })
     // }
     resp.json({ status: "OK", url: "hub" })
+
 });
 
 app.listen(3000, (err) => {
