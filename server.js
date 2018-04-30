@@ -102,7 +102,7 @@ const app = express();
 * @name dbUrl
 * @description This is the database port to which the server will communicate to the database
 */
-var dbURL = process.env.DATABASE_URL || "postgres://postgres:thegreatpass@localhost:5432/callcenter"; // change this per db name
+var dbURL = process.env.DATABASE_URL || "postgres://postgres:hadavi@localhost:5432/postgres"; // change this per db name
 
 /**
 * @global
