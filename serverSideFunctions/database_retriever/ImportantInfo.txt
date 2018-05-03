@@ -1,0 +1,1 @@
+Delete the database tables first then run the new_sql.sql if you want to run the tesst..
