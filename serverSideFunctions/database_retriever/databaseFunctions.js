@@ -16,7 +16,7 @@ var getLoginData = (username) => {
             if (res.rows.length === 0) {
                 reject('Not Found')
             } else {
-                resolve(res.rows[0].password)
+                resolve(res.rows[0])
             }
         })
     })
