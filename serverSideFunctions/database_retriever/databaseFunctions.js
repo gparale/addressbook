@@ -4,7 +4,7 @@
  */
 const { Pool, Client } = require('pg')
 
-var dbURL = process.env.DATABASE_URL || "postgres://postgres:thegreatpass@localhost:5432/callcenter";
+var dbURL = process.env.DATABASE_URL || "postgres://postgres:hadavi@localhost:5432/postgres";
 
 const pgpool = new Pool({
     connectionString: dbURL,
@@ -16,7 +16,7 @@ var getLoginData = (username) => {
             if (res.rows.length === 0) {
                 reject('Not Found')
             } else {
-                resolve(res.rows[0].password)
+                resolve(res.rows[0])
             }
         })
     })
@@ -155,10 +155,16 @@ var addContactAddress = (cont_id, user_id, address) =>{
         })*/
 }
 
-var createAccount = (e_mail, password) => {
+var createAccount = (e_mail, password, last_name, first_name) => {
     return new Promise((resolve, reject)=>{
         resolve('Account Added')
     })
+    /*pgpool.query('INSERT INTO users(username, password, first_name, last_name) VALUES($1,$2,$3,$4)', [e_mail,password,first_name,last_name], (err, res) => {
+        if (err) {
+            reject('Account not created')
+        }
+        resolve('Account created')
+    }*/
 }
 
 var addUserAddress = (address) =>{
