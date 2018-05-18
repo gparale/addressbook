@@ -6,3 +6,4 @@ package.json
 *.json
 *.json
 serverSideFunctions/database_retriever/z.js
+serverSideFunctions/database_retriever/z - Copy.js

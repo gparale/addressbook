@@ -178,4 +178,4 @@ var addUserPhone = (phone_number) =>{
         resolve('User Phone Number Added')
     })
 }
-module.exports = { getLoginData, getUserData, getContInfo, getContAccount, addContactPhone, addContactAddress, createAccount, addUserPhone, addUserAddress}
+module.exports = { getLoginData, getUserData, getContInfo, getContAccount, addContactPhone, addContactAddress, createAccount, addUserPhone, addUserAddress, getContactAddresses, getContactPhone}
