@@ -145,7 +145,11 @@ var addContactPhone = (cont_id, user_id, phone_number) => {
 
 var addContactAddress = (cont_id, user_id, address) =>{
     return new Promise((resolve, reject)=>{
-        resolve('Address Added')
+        if(address == '' && address.length <= 50){
+            reject('Invalid address')
+        }else{
+            resolve('Address Added')
+        }
     })
     /*pgpool.query('INSERT INTO contact_address(cont_id, user_id, address) VALUES($1,$2,$3);', [cont_id, user_id, address], (err, res) => {
             if (err) {

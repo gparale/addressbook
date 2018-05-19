@@ -76,3 +76,17 @@ test('test contacts of a user alt', () => {
 		    phone_numbers: [ '6341234235' ] } ])
 	})
 })
+
+
+test('test adding new phone for contact', () => {
+	databaseFun.addContactPhone(1, 1, '12345678901234567890123456789012345678901234567890x').then((result) => {
+		expect(result).toBe('Invalid Number')
+	})
+})
+
+test('test adding new address for contact', () => {
+	databaseFun.addContactAddress(1, 1, '').then((result) => {
+		expect(result).toBe('Invalid Number')
+	})
+})
+
