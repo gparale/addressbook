@@ -24,22 +24,30 @@ var getLoginData = (username) => {
 
 var getUserData = (user_id) => {
     return new Promise((resolve, reject) => {
-        pgpool.query('SELECT fname, lname FROM users WHERE user_id = $1', [user_id], (err, res) => {
+        pgpool.query('SELECT fname, lname, username, bio FROM users WHERE user_id = $1', [user_id], (err, res) => {
             if (res.rows.length === 0) {
                 reject('Not Found')
             } else {
-                user_Data = { fname: res.rows[0].fname, lname: res.rows[0].lname }
-                pgpool.query('SELECT p_number FROM user_phone WHERE user_id = $1', [user_id], (err, res) => {
+                user_Data = { fname: res.rows[0].fname, lname: res.rows[0].lname, bio: res.rows[0].bio, email: res.rows[0].username }
+                pgpool.query('SELECT * FROM user_phone WHERE user_id = $1', [user_id], (err, res) => {
                     phone_number = []
                     for (i = 0; i < res.rows.length; i++) {
-                        phone_number.push(res.rows[i].p_number)
+                        phone_data = {
+                            phone_id: res.rows[i].user_id + '_' + res.rows[i].p_index + '_phone',
+                            phone: res.rows[i].p_number,
+                            type: res.rows[i].p_type
+                        }
+                        phone_number.push(phone_data)
                     }
                     user_Data['phone_numbers'] = phone_number
-                    pgpool.query('SELECT address FROM user_address WHERE user_id = $1', [user_id], (err, res) => {
-
+                    pgpool.query('SELECT * FROM user_address WHERE user_id = $1', [user_id], (err, res) => {
                         addresses = []
                         for (i = 0; i < res.rows.length; i++) {
-                            addresses.push(res.rows[i].address)
+                            addr_data = {
+                                address_id: res.rows[i].user_id + '_' + res.rows[i].addr_index + '_address',
+                                addressName: res.rows[i].address
+                            }
+                            addresses.push(addr_data)
                         }
                         user_Data['addresses'] = addresses
                         resolve(user_Data)
@@ -53,10 +61,14 @@ var getUserData = (user_id) => {
     })
 }
 
-var getContAccount = (fname, lname) => {
+var getContAccount = (keyword) => {
     return new Promise((resolve, reject) => {
-        pgpool.query('SELECT user_id, fname, lname FROM users WHERE fname = $1 and lname= $2', [fname, lname], function(err, res) {
-            if (res.rows.length !== 0) {
+        searchstuff = keyword + '%'
+        pgpool.query('SELECT user_id, fname, lname, username FROM users WHERE fname like $1 or lname like $1 or username like $1', [searchstuff], function(err, res) {
+            if(err){
+                console.log(err)
+            }
+            if (res.rows.length != 0) {
                 resolve(res.rows)
             }
         })
@@ -64,10 +76,11 @@ var getContAccount = (fname, lname) => {
 }
 var getContactAddresses = (user_id, cont_id) => {
     return new Promise((resolve, reject) => {
-        pgpool.query('SELECT address FROM contact_address WHERE user_id= $1 and cont_id= $2', [user_id, cont_id], function(err, res) {
+        pgpool.query('SELECT * FROM contact_address WHERE user_id= $1 and cont_id= $2', [user_id, cont_id], function(err, res) {
             addresses = []
             for (i = 0; i < res.rows.length; i++) {
-                addresses.push(res.rows[i].address)
+                addr_info = { addr: res.rows[i].address, cont_id: res.rows[i].user_id + "_" + res.rows[i].cont_id + "_" + res.rows[i].addr_index }
+                addresses.push(addr_info)
             }
             resolve(addresses)
         })
@@ -76,10 +89,11 @@ var getContactAddresses = (user_id, cont_id) => {
 
 var getContactPhone = (user_id, cont_id) => {
     return new Promise((resolve, reject) => {
-        pgpool.query('SELECT p_number FROM contact_phone WHERE user_id= $1 and cont_id= $2', [user_id, cont_id], function(err, res) {
+        pgpool.query('SELECT p_number, p_type FROM contact_phone WHERE user_id= $1 and cont_id= $2', [user_id, cont_id], function(err, res) {
             numbers = []
             for (i = 0; i < res.rows.length; i++) {
-                numbers.push(res.rows[i].p_number)
+                phone_info = { number: res.rows[i].p_number, type: res.rows[i].p_type }
+                numbers.push(phone_info)
             }
             resolve(numbers)
         })
@@ -88,7 +102,7 @@ var getContactPhone = (user_id, cont_id) => {
 
 var getContactsInfo = (user_id) => {
     return new Promise((resolve, reject) => {
-        pgpool.query('SELECT cont_id ,firstname, lastname, with_account, acct_num FROM contacts WHERE user_id = $1', [user_id], (err, res) => {
+        pgpool.query('SELECT cont_id, user_id ,firstname, lastname, with_account, acct_num, bio FROM contacts WHERE user_id = $1', [user_id], (err, res) => {
             if (res.rows.length > 0) {
                 resolve(res.rows)
             } else {
@@ -103,22 +117,25 @@ async function getContInfo(user_id) { //A way to call promises "synchronously"
     var x = await getContactsInfo(user_id) //Used the await function for stuff that needs promise pending
     contacts = []
     for (let i in x) { //Do not use the normal for loop otherwise it wouldn't work
-        cont_info = { cont_id: x[i].cont_id, fname: x[i].firstname, lname: x[i].lastname }
+        cont_info = { cont_id: x[i].cont_id + '_' + x[i].user_id + '_' + x[i].firstname, fname: x[i].firstname, lname: x[i].lastname, with_account: x[i].with_account }
 
         if (x[i].with_account === false) {
+            cont_info['bio'] = x[i].bio
+
             var y = await getContactAddresses(user_id, x[i].cont_id)
 
-            cont_info['addresses'] = y
+            cont_info['address'] = y
 
             var z = await getContactPhone(user_id, x[i].cont_id)
 
-            cont_info['phone_numbers'] = z
+            cont_info['phonenumber'] = z
 
             contacts.push(cont_info)
         } else {
             var b = await getUserData(x[i].acct_num)
-            cont_info['addresses'] = b.addresses
-            cont_info['phone_numbers'] = b.phone_numbers
+            cont_info['bio'] = b.bio
+            cont_info['address'] = b.addresses
+            cont_info['phonenumber'] = b.phone_numbers
             contacts.push(cont_info)
         }
 
@@ -126,50 +143,106 @@ async function getContInfo(user_id) { //A way to call promises "synchronously"
     return contacts
 }
 
-var addContactPhone = (cont_id, user_id, phone_number) => {
+var addContactPhone = (cont_id, user_id, phone_number, type) => {
     return new Promise((resolve, reject) => {
-        if((/^[0-9]+$/.test(phone_number)) && (phone_number.length >= 10) && (phone_number.length < 14)){
-            resolve('Number Has Been Added')
+        if ((/^[0-9]+$/.test(phone_number)) && (phone_number.length == 10)) {
+            pgpool.query('INSERT INTO contact_phone(cont_id, user_id, p_number, p_type) VALUES($1,$2,$3,$4);', [cont_id, user_id, phone_number, type], (err, res) => {
+                if (err) {
+                    reject('Phone Number Not Added')
+                }
+                resolve('Phone Number Added')
+            })
         } else {
             reject('Invalid Number')
         }
-        /*pgpool.query('INSERT INTO contact_phone(cont_id, user_id, p_number) VALUES($1,$2,$3);', [cont_id, user_id, phone_number], (err, res) => {
-            if (err) {
-                reject('Phone Number Not Added')
-            }
-            resolve('Phone Number Added')
-        })*/
+        /**/
     })
 
 }
 
-var addContactAddress = (cont_id, user_id, address) =>{
-    return new Promise((resolve, reject)=>{
-        resolve('Address Added')
+var addContact = (user_id, fname, lname, bio) => {
+    return new Promise((resolve, reject) => {
+        pgpool.query('insert into contacts(user_id, firstname, lastname, with_account, bio) values($1, $2, $3, false, $4);', [user_id, fname, lname, bio], (err, res) => {
+            if (err) {
+                reject('Contact Not Added')
+            }
+            resolve('Contact Added')
+        })
     })
-    /*pgpool.query('INSERT INTO contact_address(cont_id, user_id, address) VALUES($1,$2,$3);', [cont_id, user_id, address], (err, res) => {
+}
+
+var addContactwithAccount = (user_id, fname, lname, acct_num) => {
+    return new Promise((resolve, reject) => {
+        pgpool.query('insert into contacts(user_id, firstname, lastname, with_account, acct_num) values($1, $2, $3, true, $4);', [user_id, fname, lname, acct_num], (err, res) => {
+            if (err) {
+                reject('Contact Not Added')
+            }
+            resolve('Contact Added')
+        })
+    })
+}
+
+var addContactAddress = (cont_id, user_id, address) => {
+    return new Promise((resolve, reject) => {
+        pgpool.query('INSERT INTO contact_address(cont_id, user_id, address) VALUES($1,$2,$3);', [cont_id, user_id, address], (err, res) => {
             if (err) {
                 reject('Address Not Added')
             }
             resolve('Address Added')
-        })*/
+        })
+    })
 }
 
 var createAccount = (e_mail, password) => {
-    return new Promise((resolve, reject)=>{
+    return new Promise((resolve, reject) => {
         resolve('Account Added')
     })
 }
-
-var addUserAddress = (address) =>{
-    return new Promise((resolve, reject)=>{
-        resolve('User Address Addedd')
+//--------------------- User Account Edits And Additions ---------------------
+var addUserAddress = (user_id, address) => {
+    return new Promise((resolve, reject) => {
+        pgpool.query('insert into user_address(user_id, address) values($1, $2);', [user_id, address], (err, res) => {
+            if (err) {
+                reject('Address Not Added')
+            }
+            resolve('Address Added')
+        })
     })
 }
 
-var addUserPhone = (phone_number) =>{
-    return new Promise((resolve, reject)=>{
-        resolve('User Phone Number Added')
+var addUserPhone = (user_id, phone_number, type) => {
+    return new Promise((resolve, reject) => {
+        pgpool.query('insert into user_phone(user_id, p_number, p_type) values($1, $2, $3);', [user_id, phone_number, type], (err, res) => {
+            if (err) {
+                reject('Phone Not Added')
+            }
+            resolve('Phone Added')
+        })
     })
 }
-module.exports = { getLoginData, getUserData, getContInfo, getContAccount, addContactPhone, addContactAddress, createAccount, addUserPhone, addUserAddress}
+
+var editUserBio = (user_id, new_bio) => {
+    return new Promise((resolve, reject) => {
+        pgpool.query('UPDATE users SET bio = $1 WHERE user_id = $2;', [new_bio, user_id], (err, res) => {
+            if (err) {
+                reject('Bio not added')
+            }
+            resolve('Bio has been updated')
+        })
+    })
+}
+
+module.exports = {
+    getLoginData,
+    getUserData,
+    getContInfo,
+    getContAccount,
+    addContactPhone,
+    addContactAddress,
+    createAccount,
+    addUserPhone,
+    addUserAddress,
+    editUserBio,
+    addContact,
+    addContactwithAccount
+}
