@@ -4,7 +4,7 @@
  */
 const { Pool, Client } = require('pg')
 
-var dbURL = process.env.DATABASE_URL || "postgres://postgres:thegreatpass@localhost:5432/callcenter";
+var dbURL = process.env.DATABASE_URL || "postgres://postgres:hadavi@localhost:5432/postgres";
 
 const pgpool = new Pool({
     connectionString: dbURL,
@@ -171,6 +171,7 @@ var addContact = (user_id, fname, lname, bio) => {
     })
 }
 
+
 var addContactwithAccount = (user_id, fname, lname, acct_num) => {
     return new Promise((resolve, reject) => {
         pgpool.query('insert into contacts(user_id, firstname, lastname, with_account, acct_num) values($1, $2, $3, true, $4);', [user_id, fname, lname, acct_num], (err, res) => {
@@ -184,19 +185,31 @@ var addContactwithAccount = (user_id, fname, lname, acct_num) => {
 
 var addContactAddress = (cont_id, user_id, address) => {
     return new Promise((resolve, reject) => {
+      if(address == '' && address.length <= 50){
+        reject('Invalid address')
+      }else{
         pgpool.query('INSERT INTO contact_address(cont_id, user_id, address) VALUES($1,$2,$3);', [cont_id, user_id, address], (err, res) => {
             if (err) {
                 reject('Address Not Added')
             }
             resolve('Address Added')
         })
+      }
+      
     })
 }
 
-var createAccount = (e_mail, password) => {
-    return new Promise((resolve, reject) => {
+
+var createAccount = (e_mail, password, last_name, first_name) => {
+    return new Promise((resolve, reject)=>{
         resolve('Account Added')
     })
+    /*pgpool.query('INSERT INTO users(username, password, first_name, last_name) VALUES($1,$2,$3,$4)', [e_mail,password,first_name,last_name], (err, res) => {
+        if (err) {
+            reject('Account not created')
+        }
+        resolve('Account created')
+    }*/
 }
 //--------------------- User Account Edits And Additions ---------------------
 var addUserAddress = (user_id, address) => {
@@ -232,6 +245,7 @@ var editUserBio = (user_id, new_bio) => {
     })
 }
 
+
 module.exports = {
     getLoginData,
     getUserData,
@@ -246,3 +260,4 @@ module.exports = {
     addContact,
     addContactwithAccount
 }
+

@@ -1,1 +1,9 @@
 node_modules
+package-lock.json
+package.json
+*.json
+*.json
+*.json
+*.json
+serverSideFunctions/database_retriever/z.js
+serverSideFunctions/database_retriever/z - Copy.js
