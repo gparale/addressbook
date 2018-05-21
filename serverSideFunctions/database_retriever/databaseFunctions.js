@@ -246,4 +246,3 @@ module.exports = {
     addContact,
     addContactwithAccount
 }
-module.exports = { getLoginData, getUserData, getContInfo,getContactsInfo, getContAccount, addContactPhone, addContactAddress, createAccount, addUserPhone, addUserAddress, getContactAddresses, getContactPhone}
