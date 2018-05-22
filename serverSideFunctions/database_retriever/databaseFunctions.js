@@ -4,7 +4,7 @@
  */
 const { Pool, Client } = require('pg')
 
-var dbURL = process.env.DATABASE_URL || "postgres://postgres:hadavi@localhost:5432/postgres";
+var dbURL = process.env.DATABASE_URL || "postgres://postgres:thegreatpass@localhost:5432/callcenter";
 
 const pgpool = new Pool({
     connectionString: dbURL,
@@ -185,6 +185,7 @@ var addContactwithAccount = (user_id, fname, lname, acct_num) => {
 
 var addContactAddress = (cont_id, user_id, address) => {
     return new Promise((resolve, reject) => {
+
       if(address == '' && address.length <= 50){
         reject('Invalid address')
       }else{
@@ -194,6 +195,7 @@ var addContactAddress = (cont_id, user_id, address) => {
             }
             resolve('Address Added')
         })
+
       }
       
     })
@@ -202,14 +204,20 @@ var addContactAddress = (cont_id, user_id, address) => {
 
 var createAccount = (e_mail, password, last_name, first_name) => {
     return new Promise((resolve, reject)=>{
+
         resolve('Account Added')
     })
-    /*pgpool.query('INSERT INTO users(username, password, first_name, last_name) VALUES($1,$2,$3,$4)', [e_mail,password,first_name,last_name], (err, res) => {
-        if (err) {
-            reject('Account not created')
-        }
-        resolve('Account created')
-    }*/
+}
+//--------------------- User Account Edits And Additions ---------------------
+var addUserAddress = (user_id, address) => {
+    return new Promise((resolve, reject) => {
+        pgpool.query('insert into user_address(user_id, address) values($1, $2);', [user_id, address], (err, res) => {
+            if (err) {
+                reject('Address Not Added')
+            }
+            resolve('Address Added')
+        })
+    })
 }
 //--------------------- User Account Edits And Additions ---------------------
 var addUserAddress = (user_id, address) => {
@@ -246,6 +254,7 @@ var editUserBio = (user_id, new_bio) => {
 }
 
 
+
 module.exports = {
     getLoginData,
     getUserData,
@@ -259,5 +268,6 @@ module.exports = {
     editUserBio,
     addContact,
     addContactwithAccount
+
 }
 
